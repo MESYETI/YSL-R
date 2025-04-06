@@ -83,6 +83,9 @@ int main(string[] args) {
 			catch (YSLError) {
 				env.ErrorHandler();
 			}
+			catch (YSLExit e) {
+				writefln("REPL: Returned %d", e.code);
+			}
 			catch (Exception e) {
 				stderr.writefln("Exception from %s:%d: %s", e.file, e.line, e.msg);
 				stderr.writeln(e.info);
@@ -100,6 +103,9 @@ int main(string[] args) {
 
 		try {
 			env.Run();
+		}
+		catch (YSLExit e) {
+			return e.code;
 		}
 		catch (YSLError) {
 			env.ErrorHandler();

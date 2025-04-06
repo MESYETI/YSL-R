@@ -70,6 +70,15 @@ Variable BuiltIn_ImportSTD(string[] args, Environment env) {
 	return [];
 }
 
+class YSLExit : Exception {
+	int code;
+
+	this(int pcode) {
+		code = pcode;
+		super("", file, line);
+	}
+}
+
 class YSLError : Exception {
 	this(string file = __FILE__, size_t line = __LINE__) {
 		super("", file, line);
@@ -104,6 +113,7 @@ class Environment {
 		import yslr.modules.stdio;
 		import yslr.modules.editor;
 		import yslr.modules.stdfunc;
+		import yslr.modules.process;
 		import yslr.modules.stdstring;
 
 		modules["doc"]       = Module_Doc();
@@ -114,6 +124,7 @@ class Environment {
 		modules["editor"]    = Module_Editor();
 		modules["stdfunc"]   = Module_Stdfunc();
 		modules["stdstring"] = Module_Stdstring();
+		modules["process"]   = Module_Process();
 
 		Import("core", true);
 	}

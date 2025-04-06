@@ -586,7 +586,7 @@ static Variable Return(string[] args, Environment env) {
 
 static Variable Exit(string[] args, Environment env) {
 	if (args.length == 0) {
-		exit(0);
+		throw new YSLExit(0);
 	}
 	else {
 		if (!args[0].isNumeric()) {
@@ -594,7 +594,7 @@ static Variable Exit(string[] args, Environment env) {
 			throw new YSLError();
 		}
 	
-		exit(parse!int(args[0]));
+		throw new YSLExit(parse!int(args[0]));
 	}
 }
 

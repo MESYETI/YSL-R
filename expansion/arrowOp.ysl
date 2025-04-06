@@ -1,0 +1,12 @@
+
+init_expansion_arrow_op:
+	import stdfunc
+	stdfunc.new_func -> *exp_arrow_op
+	set_args -> other
+	return
+
+exp_arrow_op:
+	local varName
+	var varName pass
+	var !varName copy return
+	return

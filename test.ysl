@@ -1,0 +1,13 @@
+import_std
+import process
+
+# load arrow op expansion
+load_end expansion/arrowOp.ysl
+gosub *init_expansion_arrow_op
+
+# try it out
+process.get_env SHELL
+-> foobar
+println !foobar
+
+exit
