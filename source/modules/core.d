@@ -109,7 +109,10 @@ static Variable Var(string[] args, Environment env) {
 				index = args.length == 4? parse!size_t(args[3]) : 0;
 			}
 
-			if ((args[2] != "return") && !env.VariableExists(args[2])) {
+			if (
+				(args[2] != "return") && (args[2] != "call") &&
+				!env.VariableExists(args[2])
+			) {
 				stderr.writefln("Error: var: No such variable: '%s'", args[0]);
 				throw new YSLError();
 			}
@@ -128,6 +131,9 @@ static Variable Var(string[] args, Environment env) {
 				else {
 					value = [env.PopReturn()[index]];
 				}
+			}
+			else if (args[2] == "call") {
+				value = [env.PopCall()];
 			}
 			else {
 				if (copyFull) {

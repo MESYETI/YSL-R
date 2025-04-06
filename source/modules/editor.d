@@ -1,10 +1,13 @@
 module yslr.modules.editor;
 
+import std.conv;
 import std.array;
 import std.stdio;
 import std.exception;
 import ydlib.sortedMap;
 import yslr.environment;
+
+private SortedMap!(int, string)[int] buffers;
 
 static Variable List(string[] args, Environment env) {
 	foreach (key, ref value ; env.code) {
@@ -55,12 +58,38 @@ static Variable Renum(string[] args, Environment env) {
 	return [];
 }
 
+static Variable Store(string[] args, Environment env) {
+	// create a copy
+	auto copy = new SortedMap!(int, string);
+
+	foreach (key, ref value ; env.code) {
+		copy[key] = value.idup;
+	}
+
+	buffers[parse!int(args[0])] = copy;
+	return [];
+}
+
+static Variable Restore(string[] args, Environment env) {
+	// create a copy
+	auto copy = new SortedMap!(int, string);
+
+	foreach (key, ref value ; buffers[parse!int(args[0])]) {
+		copy[key] = value.idup;
+	}
+
+	env.code = copy;
+	return [];
+}
+
 Module Module_Editor() {
 	Module ret;
-	ret["list"]  = Function.CreateBuiltIn(false, [], &List);
-	ret["clear"] = Function.CreateBuiltIn(false, [], &Clear);
-	ret["load"]  = Function.CreateBuiltIn(true, [ArgType.Other], &Load);
-	ret["save"]  = Function.CreateBuiltIn(true, [ArgType.Other], &Save);
-	ret["renum"] = Function.CreateBuiltIn(true, [], &Renum);
+	ret["list"]    = Function.CreateBuiltIn(false, [], &List);
+	ret["clear"]   = Function.CreateBuiltIn(false, [], &Clear);
+	ret["load"]    = Function.CreateBuiltIn(true, [ArgType.Other], &Load);
+	ret["save"]    = Function.CreateBuiltIn(true, [ArgType.Other], &Save);
+	ret["renum"]   = Function.CreateBuiltIn(true, [], &Renum);
+	ret["store"]   = Function.CreateBuiltIn(true, [ArgType.Numerical], &Store);
+	ret["restore"] = Function.CreateBuiltIn(true, [ArgType.Numerical], &Restore);
 	return ret;
 }

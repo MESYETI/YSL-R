@@ -1,13 +1,13 @@
 import_std
 import process
 
-# load arrow op expansion
-load_end expansion/arrowOp.ysl
-gosub *init_expansion_arrow_op
+# load C expansion
+load_end expansion/c.ysl
+gosub *init_expansion_c
 
 # try it out
-process.get_env SHELL
--> foobar
-println !foobar
+println "Hello, "
 
-exit
+begin_c
+	puts("World");
+end_c

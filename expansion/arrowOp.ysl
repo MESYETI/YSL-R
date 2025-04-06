@@ -1,4 +1,3 @@
-
 init_expansion_arrow_op:
 	import stdfunc
 	stdfunc.new_func -> *exp_arrow_op

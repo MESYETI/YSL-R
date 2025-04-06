@@ -39,17 +39,16 @@ static Variable GetLines(string[] args, Environment env) {
 	int to   = -1;
 
 	if (args.length != 0) {
-		if (args.length != 2) {
-			stderr.writefln("Error: get_lines: Must have either 0 or 2 parameters");
-			throw new YSLError();
-		}
-		if (!args[0].isNumeric() || !args[1].isNumeric()) {
+		if (!args[0].isNumeric() || ((args.length > 1) && !args[1].isNumeric())) {
 			stderr.writefln("Error: get_lines: Parameters must be numeric");
 			throw new YSLError();
 		}
 
 		from = parse!int(args[0]);
-		to   = parse!int(args[1]);
+
+		if (args.length > 1) {
+			to = parse!int(args[1]);
+		}
 	}
 
 	foreach (key, ref value ; env.code) {
@@ -167,6 +166,28 @@ static Variable GetIP(string[] args, Environment env) {
 	return [env.ip.value.key];
 }
 
+static Variable NextLine(string[] args, Environment env) {
+	auto current   = env.code.entries.head;
+	bool returnKey = false;
+	int  find      = parse!int(args[0]);
+
+	while (current !is null) {
+		if (current.value.key == find) {
+			returnKey = true;
+			goto next;
+		}
+		if (returnKey) {
+			return [current.value.key];
+		}
+
+		next:
+		current = current.next;
+	}
+
+	stderr.writefln("Error: next_line: Failed to get next key");
+	throw new YSLError();
+}
+
 Module Module_Ysl() {
 	Module ret;
 	ret["reset"]       = Function.CreateBuiltIn(true, [], &Reset);
@@ -179,5 +200,6 @@ Module Module_Ysl() {
 	ret["push_pass"]   = Function.CreateBuiltIn(false, [], &PushPass);
 	ret["push_call"]   = Function.CreateBuiltIn(true, [ArgType.Numerical], &PushCall);
 	ret["get_ip"]      = Function.CreateBuiltIn(true, [], &GetIP);
+	ret["next_line"]   = Function.CreateBuiltIn(true, [ArgType.Numerical], &NextLine);
 	return ret;
 }

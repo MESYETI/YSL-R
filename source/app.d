@@ -66,6 +66,12 @@ int main(string[] args) {
 	if (inFile.empty()) {
 		writeln("YSL repl");
 
+		env.Import("file", false);
+		env.Import("stdio", true);
+		env.Import("editor", true);
+		env.Import("process", true);
+		env.Import("stdstring", true);
+
 		while (true) {
 			write("> ");
 			stdout.flush();

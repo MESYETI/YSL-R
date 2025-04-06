@@ -18,7 +18,8 @@ alias Label    = ListNode!(MapEntry!(int, string));
 
 enum ArgType {
 	Numerical,
-	Other
+	Other,
+	Variable
 }
 
 struct Function {
@@ -357,6 +358,10 @@ class Environment {
 					break;
 				}
 				case ArgType.Other: break;
+				case ArgType.Variable: {
+					if (!VariableExists(parts[i])) return false;
+					break;
+				}
 				default:            assert(0);
 			}
 		}

@@ -1,0 +1,61 @@
+# just a toy thing
+
+init_expansion_c:
+	import stdfunc
+	stdfunc.new_func begin_c *begin_c
+	set_args begin_c
+	return
+
+begin_c:
+	import ysl
+	import stdio
+	import process
+	local i
+	local start
+	local lines
+	local length
+	local line
+	local lineNum
+	local file
+
+	# create C source file
+	stdio.file_open "ysl_temp.c" "w"
+	var file from return
+
+	# start boilerplate
+	stdio.file_write $file "#include <stdio.h>\n"
+	stdio.file_write $file "int main(void) {\n"
+
+	var start from call
+	ysl.next_line $start
+	var start from return
+
+	ysl.get_lines $start
+	var lines copy return
+
+	var i = 0
+	size lines
+	var length from return
+	.loop:
+		var lineNum from lines $i
+		ysl.get_line $lineNum
+		var line copy return
+		cmp !line "end_c"
+		goto_if *.end
+
+		stdio.file_write $file !line
+		stdio.file_write $file "\n"
+
+		var i += 1
+		lt $i $length
+		goto_if *.loop
+
+	.end:
+		# end boilerplate
+		stdio.file_write $file "return 0;\n}\n"
+
+		# now compile and run it
+		process.shell "gcc ysl_temp.c -o ysl_temp"
+		process.shell "./ysl_temp"
+		process.shell "rm ysl_temp ysl_temp.c"
+		exit
